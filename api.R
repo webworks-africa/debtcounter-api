@@ -35,6 +35,24 @@ cors <- function(req, res) {
 }
 
 # ============================================================
+# ROOT (OPTIONAL BUT HELPFUL)
+# ============================================================
+
+#* @get /
+function() {
+  list(
+    message = "DebtCounter API is running",
+    endpoints = c(
+      "/health",
+      "/api/debt/current",
+      "/api/debt/growth",
+      "/api/expenditure/current",
+      "/api/indicators/current"
+    )
+  )
+}
+
+# ============================================================
 # HEALTH CHECK
 # ============================================================
 
@@ -189,21 +207,17 @@ function(req) {
 #* @post /api/log/visit
 function(req) {
   
-  visitor_data <- list(
-    session_id = paste0(sample(letters, 10, TRUE), collapse = ""),
-    timestamp = format(Sys.time(), "%Y-%m-%d %H:%M:%S")
-  )
-  
   list(success = TRUE, message = "Logged")
 }
 
 # ============================================================
-# START SERVER (THIS IS THE KEY ADDITION FOR RENDER)
+# START SERVER (RENDER FIX)
 # ============================================================
 
-cat("🚀 API starting on Render...\n")
+cat("🚀 Starting DebtCounter API on Render...\n")
 
-pr <- plumb("api.R")
+# IMPORTANT: Use explicit path so routes load correctly
+pr <- plumber::plumb(file = "./api.R")
 
 pr$run(
   host = "0.0.0.0",
