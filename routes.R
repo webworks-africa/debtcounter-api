@@ -77,33 +77,17 @@ function() {
 
 #* @get /api/debt/current
 function() {
+  current_time <- Sys.time()
   list(
     success = TRUE,
     data = list(
       total = calculate_total_debt(),
       domestic = calculate_domestic_debt(),
       external = calculate_external_debt(),
-      timestamp = Sys.time()
+      timestamp = current_time,
+      date = format(current_time, "%d %B %Y")
     )
   )
-}
-
-#* @get /api/debt/growth
-function(unit = "sec") {
-  list(
-    success = TRUE,
-    data = calculate_growth(unit)
-  )
-}
-
-#* @get /api/debt/historical
-function() {
-  list(success = TRUE, data = get_historical_debt())
-}
-
-#* @get /api/debt/ratio
-function() {
-  list(success = TRUE, data = get_debt_ratio())
 }
 
 # ============================================================
@@ -112,25 +96,17 @@ function() {
 
 #* @get /api/expenditure/current
 function() {
+  current_time <- Sys.time()
   list(
     success = TRUE,
     data = list(
       expenditure = calculate_expenditure(),
       revenue = calculate_revenue(),
       deficit = calculate_deficit(),
-      timestamp = Sys.time()
+      timestamp = current_time,
+      date = format(current_time, "%d %B %Y")
     )
   )
-}
-
-#* @get /api/expenditure/growth
-function(unit = "sec") {
-  list(success = TRUE, data = calculate_expenditure_growth(unit))
-}
-
-#* @get /api/expenditure/historical
-function() {
-  list(success = TRUE, data = get_historical_expenditure())
 }
 
 # ============================================================
@@ -139,6 +115,7 @@ function() {
 
 #* @get /api/indicators/current
 function() {
+  current_time <- Sys.time()
   list(
     success = TRUE,
     data = list(
@@ -147,7 +124,8 @@ function() {
       external_interest_rate = calculate_external_rate(),
       gdp = calculate_gdp(),
       population = calculate_population(),
-      timestamp = Sys.time()
+      timestamp = current_time,
+      date = format(current_time, "%d %B %Y")
     )
   )
 }
