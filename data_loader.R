@@ -168,7 +168,27 @@ if (!is.null(df_wacd_metrics) && nrow(df_wacd_metrics) > 0) {
   int_rate_ext <- 6.8
 }
 
-gps_wacd_ttl <- (df_wacd_metrics$gps_wacd_dom[1] + df_wacd_metrics$gps_wacd_ext[1]) * 1e6
+if (!is.null(df_wacd_metrics) && nrow(df_wacd_metrics) > 0) {
+  gps_wacd_ttl <- (df_wacd_metrics$gps_wacd_dom[1] + df_wacd_metrics$gps_wacd_ext[1]) * 1e6
+} else {
+  gps_wacd_ttl <- 0
+}
+
+# ============================================================
+# INDICATOR FUNCTIONS (ADD THIS)
+# ============================================================
+
+calculate_exchange_rate <- function() {
+  ifelse(is.null(forex_today) || is.na(forex_today), 128.5, forex_today)
+}
+
+calculate_domestic_rate <- function() {
+  ifelse(is.null(int_rate_dom) || is.na(int_rate_dom), 12.5, int_rate_dom)
+}
+
+calculate_external_rate <- function() {
+  ifelse(is.null(int_rate_ext) || is.na(int_rate_ext), 6.8, int_rate_ext)
+}
 
 # ============================================================
 # START TIMES FOR CALCULATIONS
