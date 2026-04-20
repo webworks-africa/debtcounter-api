@@ -267,6 +267,40 @@ calculate_growth <- function(unit = "sec") {
 }
 
 # ============================================================
+# EXPENDITURE GROWTH FUNCTION (ADD THIS)
+# ============================================================
+
+calculate_expenditure_growth <- function(unit = "sec") {
+  mult <- get_growth_multiplier(unit)
+  list(
+    expenditure = gps_exp * mult,
+    revenue = gps_rev * mult,
+    deficit = gps_def * mult,
+    formatted = list(
+      expenditure = format_kes(gps_exp * mult),
+      revenue = format_kes(gps_rev * mult),
+      deficit = format_kes(gps_def * mult)
+    )
+  )
+}
+
+# ============================================================
+# INDICATORS GROWTH FUNCTION (ADD THIS)
+# ============================================================
+
+calculate_indicators_growth <- function(unit = "sec") {
+  mult <- get_growth_multiplier(unit)
+  list(
+    gdp = gps_gdp * mult,
+    population = gps_pop * mult,
+    formatted = list(
+      gdp = format_kes(gps_gdp * mult),
+      population = format_population(gps_pop * mult)
+    )
+  )
+}
+
+# ============================================================
 # HISTORICAL DATA FOR PLOTS
 # ============================================================
 
