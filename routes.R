@@ -36,7 +36,26 @@ cors <- function(req, res) {
 function() {
   list(
     message = "DebtCounter API is running",
-    endpoints = c("/health", "/api/debt/current")
+    endpoints = c(
+      "/health",
+      "/api/debt/current",
+      "/api/debt/growth",
+      "/api/debt/historical",
+      "/api/debt/ratio",
+      "/api/expenditure/current",
+      "/api/expenditure/growth",
+      "/api/expenditure/historical",
+      "/api/indicators/current",
+      "/api/indicators/growth",
+      "/api/indicators/gdp/historical",
+      "/api/indicators/population/historical",
+      "/api/indicators/forex/historical",
+      "/api/ai/chat",
+      "/api/ai/suggestions",
+      "/api/simulate",
+      "/api/log/visit",
+      "/api/dashboard/all"
+    )
   )
 }
 
@@ -71,12 +90,20 @@ function() {
 
 #* @get /api/debt/growth
 function(unit = "sec") {
-  growth <- calculate_growth(unit)
-
   list(
     success = TRUE,
-    data = growth
+    data = calculate_growth(unit)
   )
+}
+
+#* @get /api/debt/historical
+function() {
+  list(success = TRUE, data = get_historical_debt())
+}
+
+#* @get /api/debt/ratio
+function() {
+  list(success = TRUE, data = get_debt_ratio())
 }
 
 # ============================================================
@@ -90,9 +117,20 @@ function() {
     data = list(
       expenditure = calculate_expenditure(),
       revenue = calculate_revenue(),
-      deficit = calculate_deficit()
+      deficit = calculate_deficit(),
+      timestamp = Sys.time()
     )
   )
+}
+
+#* @get /api/expenditure/growth
+function(unit = "sec") {
+  list(success = TRUE, data = calculate_expenditure_growth(unit))
+}
+
+#* @get /api/expenditure/historical
+function() {
+  list(success = TRUE, data = get_historical_expenditure())
 }
 
 # ============================================================
@@ -104,8 +142,101 @@ function() {
   list(
     success = TRUE,
     data = list(
+      forex = calculate_exchange_rate(),
+      domestic_interest_rate = calculate_domestic_rate(),
+      external_interest_rate = calculate_external_rate(),
       gdp = calculate_gdp(),
-      population = calculate_population()
+      population = calculate_population(),
+      timestamp = Sys.time()
+    )
+  )
+}
+
+#* @get /api/indicators/growth
+function(unit = "sec") {
+  list(success = TRUE, data = calculate_indicators_growth(unit))
+}
+
+#* @get /api/indicators/gdp/historical
+function() {
+  list(success = TRUE, data = get_historical_gdp())
+}
+
+#* @get /api/indicators/population/historical
+function() {
+  list(success = TRUE, data = get_historical_population())
+}
+
+#* @get /api/indicators/forex/historical
+function() {
+  list(success = TRUE, data = get_historical_forex())
+}
+
+# ============================================================
+# AI ENDPOINTS
+# ============================================================
+
+#* @post /api/ai/chat
+function(req) {
+  body <- jsonlite::fromJSON(req$postBody)
+
+  question <- body$question
+
+  # Simple mock (replace with Anthropic later)
+  response <- paste("AI response to:", question)
+
+  list(
+    success = TRUE,
+    response = response
+  )
+}
+
+#* @get /api/ai/suggestions
+function() {
+  list(
+    success = TRUE,
+    suggestions = c(
+      "What is Kenya's current debt?",
+      "How has external debt changed?",
+      "What are the fiscal risks?",
+      "Explain debt-to-GDP ratio"
+    )
+  )
+}
+
+# ============================================================
+# SIMULATION
+# ============================================================
+
+#* @post /api/simulate
+function(req) {
+  list(
+    success = TRUE,
+    message = "Simulation endpoint working (implement logic)"
+  )
+}
+
+# ============================================================
+# ANALYTICS
+# ============================================================
+
+#* @post /api/log/visit
+function() {
+  list(success = TRUE)
+}
+
+# ============================================================
+# DASHBOARD
+# ============================================================
+
+#* @get /api/dashboard/all
+function() {
+  list(
+    success = TRUE,
+    data = list(
+      debt = calculate_total_debt(),
+      expenditure = calculate_expenditure(),
+      gdp = calculate_gdp()
     )
   )
 }
