@@ -151,33 +151,82 @@ function() {
 }
 
 # ============================================================
-# AI ENDPOINTS
+# AI ASSISTANT ENDPOINTS (UPDATED FOR ANTHROPIC/CLAUDE)
 # ============================================================
 
+#* Send a message to AI Assistant (Anthropic/Claude)
 #* @post /api/ai/chat
-function(req) {
-  body <- jsonlite::fromJSON(req$postBody)
+#* @param question:string The user's question
+#* @tag AI
+function(question, req, res) {
+  
+  # Check API key
+  if (is.null(anthropic_api_key) || anthropic_api_key == "") {
+    return(list(
+      success = FALSE,
+      error = "ANTHROPIC_API_KEY is not configured"
+    ))
+  }
+  
+  # Validate question
+  if (is.null(question) || question == "") {
+    return(list(
+      success = FALSE,
+      error = "No question provided"
+    ))
+  }
+  
+  cat("AI Question received:", substr(question, 1, 100), "...\n")
 
-  question <- body$question
-
-  # Simple mock (replace with Anthropic later)
-  response <- paste("AI response to:", question)
-
-  list(
-    success = TRUE,
-    response = response
-  )
+tryCatch({
+  result <- claude_chat_with_context(question, include_report = TRUE)
+  
+  # FORCE scalar extraction
+  clean_scalar <- function(x) {
+    if (is.null(x)) return("")
+    if (is.list(x)) return(as.character(x[[1]]))
+    return(as.character(x)[1])
+  }
+  
+  if (isTRUE(result$success)) {
+    
+    return(list(
+      success = TRUE,
+      response = clean_scalar(result$response),
+      timestamp = clean_scalar(format(Sys.time(), "%Y-%m-%d %H:%M:%S"))
+    ))
+    
+  } else {
+    
+    return(list(
+      success = FALSE,
+      error = clean_scalar(result$error)
+    ))
+    
+  }
+  
+}, error = function(e) {
+  return(list(
+    success = FALSE,
+    error = paste("Error:", as.character(e$message))
+  ))
+})
 }
 
+#* Get suggested questions
 #* @get /api/ai/suggestions
+#* @tag AI
 function() {
   list(
     success = TRUE,
     suggestions = c(
-      "What is Kenya's current debt?",
-      "How has external debt changed?",
-      "What are the fiscal risks?",
-      "Explain debt-to-GDP ratio"
+      "What are the no value for money issues in the latest audit?",
+      "What unresolved audit issues were identified?",
+      "Show me contingent liability issues",
+      "What is Kenya's current debt-to-GDP ratio?",
+      "How has external debt changed over the last 5 years?",
+      "What are the major risks to debt sustainability?",
+      "Summarize the latest Auditor General findings"
     )
   )
 }
