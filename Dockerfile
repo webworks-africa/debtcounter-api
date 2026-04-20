@@ -1,7 +1,6 @@
 # FORCE REBUILD
 FROM r-base:4.3.1
 
-# Install ALL required system dependencies
 RUN apt-get update && apt-get install -y \
     libcurl4-openssl-dev \
     libssl-dev \
@@ -16,24 +15,8 @@ RUN apt-get update && apt-get install -y \
     libtiff5-dev \
     libjpeg-dev
 
-# Install ALL required R packages (FULL SET)
-RUN R -e "install.packages(c(
-    'plumber',
-    'jsonlite',
-    'dplyr',
-    'tidyr',
-    'lubridate',
-    'httr',
-    'rvest',
-    'readr',
-    'stringr',
-    'purrr',
-    'tibble',
-    'tidyselect',
-    'curl',
-    'openssl',
-    'xml2'
-), repos='https://cloud.r-project.org')"
+# ⚠️ IMPORTANT: ONE LINE ONLY (no line breaks)
+RUN R -e "install.packages(c('plumber','jsonlite','dplyr','tidyr','lubridate','httr','rvest','readr','stringr','purrr','tibble','tidyselect','curl','openssl','xml2'), repos='https://cloud.r-project.org')"
 
 WORKDIR /app
 COPY . /app
